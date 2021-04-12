@@ -1,0 +1,135 @@
+Private Sub CommandButton1_Click()
+Dim formatRange As Range
+
+formatChoice = ComboBox1.Value
+
+If formatChoice = "Select format" Then
+    MsgBox "Please select a format."
+    
+ElseIf formatChoice = "Pass/Fail/KIV" Then
+    'convert column number into alphabet
+    columnLetter = Split(Cells(1, Selection.Column).Address, "$")(1)
+    'checks for last row in the selected column
+    lastRow = Cells(Rows.Count, Selection.Column).End(xlUp).Row
+    'just ensuring to see if the first and last row is correct
+    'MsgBox (columnLetter & Selection.Row & " " & columnLetter & lastRow)
+    firstCell = columnLetter & Selection.Row
+    lastCell = columnLetter & lastRow
+    
+    Set formatRange = Range(firstCell & ":" & lastCell)
+    'clears ALL conditional formats(if there were)
+    formatRange.FormatConditions.Delete
+    'format horizontal alignment
+    formatRange.HorizontalAlignment = xlCenter
+    'add first rule
+    formatRange.FormatConditions.Add Type:=xlCellValue, Operator:=xlEqual, _
+                    Formula1:="Pass"
+    'Green
+    formatRange.FormatConditions(1).Interior.Color = RGB(198, 224, 180)
+    formatRange.FormatConditions(1).Font.Color = vbWhite
+    'second rule
+    formatRange.FormatConditions.Add Type:=xlCellValue, Operator:=xlEqual, _
+                    Formula1:="Fail"
+    'Red
+    formatRange.FormatConditions(2).Interior.Color = RGB(225, 80, 80)
+    formatRange.FormatConditions(2).Font.Color = vbWhite
+    'third rule
+    formatRange.FormatConditions.Add Type:=xlCellValue, Operator:=xlEqual, _
+                    Formula1:="KIV"
+    'Orange
+    formatRange.FormatConditions(3).Interior.Color = RGB(255, 204, 102)
+    formatRange.FormatConditions(3).Font.Color = vbWhite
+    
+ElseIf formatChoice = "Open/Closed" Then
+    'convert column number into alphabet
+    columnLetter = Split(Cells(1, Selection.Column).Address, "$")(1)
+    'checks for last row in the selected column
+    lastRow = Cells(Rows.Count, Selection.Column).End(xlUp).Row
+    'just ensuring to see if the first and last row is correct
+    'MsgBox (columnLetter & Selection.Row & " " & columnLetter & lastRow)
+    firstCell = columnLetter & Selection.Row
+    lastCell = columnLetter & lastRow
+    
+    Set formatRange = Range(firstCell & ":" & lastCell)
+    'clears ALL conditional formats(if there were)
+    formatRange.FormatConditions.Delete
+    'format horizontal alignment
+    formatRange.HorizontalAlignment = xlCenter
+    'add first rule
+    formatRange.FormatConditions.Add Type:=xlCellValue, Operator:=xlEqual, _
+                    Formula1:="Closed"
+    'Green
+    formatRange.FormatConditions(1).Interior.Color = RGB(198, 224, 180)
+    'second rule
+    formatRange.FormatConditions.Add Type:=xlCellValue, Operator:=xlEqual, _
+                    Formula1:="Open"
+    'Red
+    formatRange.FormatConditions(2).Interior.Color = RGB(225, 80, 80)
+
+ElseIf formatChoice = "Priority High" Then
+    'convert column number into alphabet
+    columnLetter = Split(Cells(1, Selection.Column).Address, "$")(1)
+    'checks for last row in the selected column
+    lastRow = Cells(Rows.Count, Selection.Column).End(xlUp).Row
+    'just ensuring to see if the first and last row is correct
+    'MsgBox (columnLetter & Selection.Row & " " & columnLetter & lastRow)
+    firstCell = columnLetter & Selection.Row
+    lastCell = columnLetter & lastRow
+    
+    Set formatRange = Range(firstCell & ":" & lastCell)
+    'clears ALL conditional formats(if there were)
+    formatRange.FormatConditions.Delete
+    
+    formatRange.FormatConditions.Add Type:=xlTextString, String:="priority high", _
+        TextOperator:=xlContains
+    'Red
+    formatRange.FormatConditions(1).Interior.Color = RGB(225, 80, 80)
+    
+ElseIf formatChoice = "Clear Formatting" Then
+    'convert column number into alphabet
+    columnLetter = Split(Cells(1, Selection.Column).Address, "$")(1)
+    'checks for last row in the selected column
+    lastRow = Cells(Rows.Count, Selection.Column).End(xlUp).Row
+    'just ensuring to see if the first and last row is correct
+    'MsgBox (columnLetter & Selection.Row & " " & columnLetter & lastRow)
+    firstCell = columnLetter & Selection.Row
+    lastCell = columnLetter & lastRow
+    
+    Set formatRange = Range(firstCell & ":" & lastCell)
+    'clears ALL conditional formats(if there were)
+    formatRange.FormatConditions.Delete
+    'format horizontal alignment
+    formatRange.HorizontalAlignment = xlLeft
+
+End If
+
+End Sub
+' if user clicks on the "Close" button
+Private Sub CommandButton2_Click()
+    End
+End Sub
+
+Private Sub CommandButton3_Click()
+    Dim selectCell As Range
+    On Error Resume Next
+    
+    Set selectCell = Application.InputBox("Select topmost cell (not including header) in column.", Type:=8)
+    
+    On Error GoTo 0
+    
+    If selectCell Is Nothing Then
+    'This will end the select without errors.
+    Else
+    'MsgBox selectCell.Address
+    Range(selectCell.Address).Select
+    'The "(False, False)" portion is to disable the "$" sign
+    Label2.Caption = selectCell.Address(False, False)
+    
+    End If
+
+End Sub
+
+Private Sub UserForm_Initialize()
+    'this is to populate the dropdown
+    ComboBox1.List = Array("Open/Closed", "Pass/Fail/KIV", "Priority High", "Clear Formatting")
+End Sub
